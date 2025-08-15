@@ -30,9 +30,7 @@ jobs:
 
       - name: Replace API key in main.js
         run: |
-          sed -i "s/{{GEMINI_API_KEY}}/$GEMINI_API_KEY/g" main.js
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          sed -i "s/{{GEMINI_API_KEY}}/${{ secrets.GEMINI_API_KEY }}/g" main.js
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
