@@ -16,29 +16,52 @@ function appendMessage(sender, text) {
 }
 
 async function translateWithGemini(text, direction) {
+    // Check if API key was properly injected
+    if (GEMINI_API_KEY === '{{GEMINI_API_KEY}}') {
+        return 'Error: API key not configured. Please check GitHub Secrets setup.';
+    }
+    
     let prompt = '';
     if (direction === 'en-ta') {
-        prompt = `Translate the following English text to Tamil: "${text}"`;
+        prompt = `Translate the following English text to Tamil: "${text}". Provide only the translation, no explanations.`;
     } else {
-        prompt = `Translate the following Tamil text to English: "${text}"`;
+        prompt = `Translate the following Tamil text to English: "${text}". Provide only the translation, no explanations.`;
     }
+    
     const body = {
-        contents: [{ parts: [{ text: prompt }] }]
+        contents: [{ 
+            parts: [{ text: prompt }] 
+        }]
     };
+    
     try {
+        console.log('Making API request to:', GEMINI_API_URL);
+        console.log('Request body:', JSON.stringify(body, null, 2));
+        
         const res = await fetch(GEMINI_API_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(body)
         });
+        
+        console.log('Response status:', res.status);
         const data = await res.json();
-        if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
-            return data.candidates[0].content.parts[0].text;
+        console.log('Response data:', JSON.stringify(data, null, 2));
+        
+        if (!res.ok) {
+            return `API Error ${res.status}: ${data.error?.message || 'Unknown error'}`;
+        }
+        
+        if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text) {
+            return data.candidates[0].content.parts[0].text.trim();
         } else {
-            return 'Sorry, I could not translate that.';
+            return `No translation found. API response: ${JSON.stringify(data)}`;
         }
     } catch (err) {
-        return 'Error contacting Gemini API.';
+        console.error('Fetch error:', err);
+        return `Network error: ${err.message}`;
     }
 }
 
