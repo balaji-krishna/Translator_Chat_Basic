@@ -1,6 +1,4 @@
-// Set your deployed backend URL once and commit (or enter it in the input box):
-// Example: const BACKEND = "https://en-ta-translator.onrender.com";
-let BACKEND = "https://translator-chat-basic.onrender.com"; // leave blank to use the input field
+let BACKEND = "https://translator-chat-basic.onrender.com";
 
 const directionEl = document.getElementById("direction");
 const inputEl = document.getElementById("user-input");

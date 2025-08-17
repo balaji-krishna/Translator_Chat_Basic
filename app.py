@@ -57,11 +57,9 @@ async def translate(payload: TranslateIn):
         r = await client.post(GEMINI_URL, json=body, headers={"Content-Type": "application/json"})
         data = r.json()
         if r.status_code != 200:
-            # bubble up Gemini error message if any
             msg = (data.get("error") or {}).get("message") or "Upstream error"
             raise HTTPException(status_code=r.status_code, detail=msg)
 
-    # extract text
     try:
         translation = data["candidates"][0]["content"]["parts"][0]["text"].strip()
     except Exception:

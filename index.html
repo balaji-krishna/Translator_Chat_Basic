@@ -2,39 +2,112 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>English ↔ Tamil Translator</title>
+  <title>AI powered English ↔ Tamil Translator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body { font-family: system-ui, Arial, sans-serif; margin: 2rem; max-width: 800px }
-    .row { display: flex; gap: .5rem; margin-bottom: .75rem; flex-wrap: wrap }
-    textarea { width: 100%; height: 140px; padding: .75rem }
-    select, button, input { padding: .6rem }
-    .log { border: 1px solid #ddd; padding: 1rem; min-height: 120px; white-space: pre-wrap; background: #fafafa }
-    .muted { color: #666; font-size: .9rem }
-    .msg-user { font-weight: 600 }
-    .msg-bot { }
+    body {
+      font-family: system-ui, Arial, sans-serif;
+      margin: 0;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 2rem;
+      text-align: center;
+    }
+    .translation-selector {
+      align-items: center;
+      background-color: #eef1f8;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      margin: 1rem auto;
+      max-width: 400px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .translation-selector label {
+      font-weight: bold;
+      color: #4a6ee0;
+      margin-right: 0.5rem;
+    }
+
+    .translation-selector select {
+      flex-grow: 1;
+      border: 2px solid #dde1f0;
+      transition: border-color 0.2s;
+    }
+
+    .translation-selector select:focus {
+      border-color: #4a6ee0;
+      outline: none;
+    }
+    h1 {
+      color: #4a6ee0;
+      margin-bottom: 0.5rem;
+    }
+    .row {
+      display: flex;
+      gap: .5rem;
+      margin-bottom: .75rem;
+      justify-content: center;
+    }
+    .translation-box {
+      margin: 1.5rem 0;
+      width: 100%;
+    }
+    textarea, .log {
+      width: 100%;
+      min-height: 140px;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #dde1f0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      box-sizing: border-box;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    textarea:focus {
+      border-color: #4a6ee0;
+      outline: none;
+    }
+
+    .log {
+      background-color: #fbfcff;
+      margin: 0;
+    }
+
+    textarea {
+      resize: vertical;
+      height: 140px;
+    }
   </style>
 </head>
 <body>
-  <h1>English ↔ Tamil Translator</h1>
-  <p class="muted">Secure: API key is kept on the server. Frontend calls a backend proxy.</p>
+  <div class="container">
+    <h1>English ↔ Tamil Translator</h1>
 
-  <div class="row">
-    <label for="direction">Direction:</label>
-    <select id="direction">
-      <option value="en-ta">English → Tamil</option>
-      <option value="ta-en">Tamil → English</option>
-    </select>
+    <div class="row translation-selector">
+      <label for="direction">Translation:</label>
+      <select id="direction">
+        <option value="en-ta">English → Tamil</option>
+        <option value="ta-en">Tamil → English</option>
+      </select>
+    </div>
+
+    <div class="translation-box">
+      <textarea id="user-input" placeholder="Type text to translate..."></textarea>
+    </div>
+
+    <div class="row">
+      <button id="translate-btn">Translate</button>
+    </div>
+
+    <div class="translation-box">
+      <div id="output" class="log"></div>
+    </div>
   </div>
-
-  <textarea id="user-input" placeholder="Type text to translate..."></textarea>
-
-  <div class="row">
-    <button id="translate-btn">Translate</button>
-    <input id="backend-url" placeholder="Backend URL (https://...)" style="flex:1" />
-  </div>
-
-  <div id="output" class="log"></div>
 
   <script src="main.js"></script>
 </body>
