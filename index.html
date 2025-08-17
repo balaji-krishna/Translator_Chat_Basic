@@ -1,37 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Agent Chatbot - English/Tamil Translator</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
-        .chat-container { max-width: 500px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 24px; }
-        .chat-log { height: 300px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px; padding: 12px; background: #fafafa; margin-bottom: 16px; }
-        .chat-message { margin-bottom: 12px; }
-        .user { color: #007bff; font-weight: bold; }
-        .bot { color: #28a745; font-weight: bold; }
-        .input-row { display: flex; gap: 8px; }
-        input, select { flex: 1; padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
-        button { padding: 8px 16px; border-radius: 4px; border: none; background: #007bff; color: #fff; cursor: pointer; }
-        button:disabled { background: #aaa; }
-    </style>
+  <meta charset="utf-8" />
+  <title>English ↔ Tamil Translator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 2rem; max-width: 800px }
+    .row { display: flex; gap: .5rem; margin-bottom: .75rem; flex-wrap: wrap }
+    textarea { width: 100%; height: 140px; padding: .75rem }
+    select, button, input { padding: .6rem }
+    .log { border: 1px solid #ddd; padding: 1rem; min-height: 120px; white-space: pre-wrap; background: #fafafa }
+    .muted { color: #666; font-size: .9rem }
+    .msg-user { font-weight: 600 }
+    .msg-bot { }
+  </style>
 </head>
 <body>
-    <div class="chat-container">
-        <h2>AI Chatbot: English ↔ Tamil Translator</h2>
-        <div class="chat-log" id="chat-log"></div>
-        <form id="chat-form" autocomplete="off">
-            <div class="input-row">
-                <input type="text" id="user-input" placeholder="Type your message..." required />
-                <select id="direction">
-                    <option value="en-ta">English → Tamil</option>
-                    <option value="ta-en">Tamil → English</option>
-                </select>
-                <button type="submit">Send</button>
-            </div>
-        </form>
-    </div>
-    <script src="main.js"></script>
+  <h1>English ↔ Tamil Translator</h1>
+  <p class="muted">Secure: API key is kept on the server. Frontend calls a backend proxy.</p>
+
+  <div class="row">
+    <label for="direction">Direction:</label>
+    <select id="direction">
+      <option value="en-ta">English → Tamil</option>
+      <option value="ta-en">Tamil → English</option>
+    </select>
+  </div>
+
+  <textarea id="user-input" placeholder="Type text to translate..."></textarea>
+
+  <div class="row">
+    <button id="translate-btn">Translate</button>
+    <input id="backend-url" placeholder="Backend URL (https://...)" style="flex:1" />
+  </div>
+
+  <div id="output" class="log"></div>
+
+  <script src="main.js"></script>
 </body>
 </html>

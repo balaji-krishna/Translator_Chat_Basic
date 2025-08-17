@@ -1,80 +1,40 @@
-// API key will be injected during build
-const GEMINI_API_KEY = '{{GEMINI_API_KEY}}';
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + GEMINI_API_KEY;
+// Set your deployed backend URL once and commit (or enter it in the input box):
+// Example: const BACKEND = "https://en-ta-translator.onrender.com";
+let BACKEND = ""; // leave blank to use the input field
 
-const chatLog = document.getElementById('chat-log');
-const chatForm = document.getElementById('chat-form');
-const userInput = document.getElementById('user-input');
-const directionSelect = document.getElementById('direction');
+const directionEl = document.getElementById("direction");
+const inputEl = document.getElementById("user-input");
+const btn = document.getElementById("translate-btn");
+const output = document.getElementById("output");
+const backendInput = document.getElementById("backend-url");
 
-function appendMessage(sender, text) {
-    const div = document.createElement('div');
-    div.className = 'chat-message';
-    div.innerHTML = `<span class="${sender}">${sender === 'user' ? 'You' : 'Bot'}:</span> ${text}`;
-    chatLog.appendChild(div);
-    chatLog.scrollTop = chatLog.scrollHeight;
-}
+btn.addEventListener("click", async () => {
+  const text = inputEl.value.trim();
+  const direction = directionEl.value;
+  const baseUrl = BACKEND || backendInput.value.trim();
 
-async function translateWithGemini(text, direction) {
-    // Check if API key was properly injected
-    if (GEMINI_API_KEY === '{{GEMINI_API_KEY}}') {
-        return 'Error: API key not configured. Please check GitHub Secrets setup.';
+  if (!text) return setOut("Please enter text.");
+  if (!baseUrl) return setOut("Please provide the backend URL.");
+
+  setOut("Translating…");
+
+  try {
+    const res = await fetch(`${baseUrl.replace(/\/+$/,'')}/translate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, direction })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setOut(`Error ${res.status}: ${data.detail || JSON.stringify(data)}`);
+      return;
     }
-    
-    let prompt = '';
-    if (direction === 'en-ta') {
-        prompt = `Translate the following English text to Tamil: "${text}". Provide only the translation, no explanations.`;
-    } else {
-        prompt = `Translate the following Tamil text to English: "${text}". Provide only the translation, no explanations.`;
-    }
-    
-    const body = {
-        contents: [{ 
-            parts: [{ text: prompt }] 
-        }]
-    };
-    
-    try {
-        console.log('Making API request to:', GEMINI_API_URL);
-        console.log('Request body:', JSON.stringify(body, null, 2));
-        
-        const res = await fetch(GEMINI_API_URL, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        });
-        
-        console.log('Response status:', res.status);
-        const data = await res.json();
-        console.log('Response data:', JSON.stringify(data, null, 2));
-        
-        if (!res.ok) {
-            return `API Error ${res.status}: ${data.error?.message || 'Unknown error'}`;
-        }
-        
-        if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text) {
-            return data.candidates[0].content.parts[0].text.trim();
-        } else {
-            return `No translation found. API response: ${JSON.stringify(data)}`;
-        }
-    } catch (err) {
-        console.error('Fetch error:', err);
-        return `Network error: ${err.message}`;
-    }
-}
-
-chatForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const text = userInput.value.trim();
-    const direction = directionSelect.value;
-    if (!text) return;
-    appendMessage('user', text);
-    userInput.value = '';
-    appendMessage('bot', 'Translating...');
-    const translation = await translateWithGemini(text, direction);
-    // Remove the 'Translating...' message
-    chatLog.lastChild.remove();
-    appendMessage('bot', translation);
+    setOut(data.translation);
+  } catch (e) {
+    setOut(`Network error: ${e.message}`);
+  }
 });
+
+function setOut(msg) {
+  output.textContent = msg;
+}
